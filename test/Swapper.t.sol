@@ -8,23 +8,19 @@ import "../src/BitToken.sol";
 
 
 contract SwapperTest is Test {
+
     Swapper public swap;
     YitToken public Yit;
     BitToken public Bit;
 
-    address customer; //user comming to place order
-    address executor; //user who is executing the order
+    address customer = mkaddr("customer"); //user comming to place order
+    address executor = mkaddr("executor"); //user who is executing the order
     address owner;
 
     function setUp() public{
         swap = new Swapper();
         Yit = new YitToken(customer);
         Bit = new BitToken(executor);
-        vm.startPrank(owner);
-        ERC20(address(Yit)).transfer(address(swap), 4000e18);
-        ERC20(address(Bit)).transfer(address(swap), 5000e18);
-        vm.stopPrank();
-        
     }
 
     function testSwapper() public{
@@ -47,5 +43,11 @@ contract SwapperTest is Test {
         return ERC20(address(Yit)).balanceOf(executor);
     }
 
-  
+     function mkaddr(string memory name) public returns (address) {
+        address addr = address(
+            uint160(uint256(keccak256(abi.encodePacked(name))))
+        );
+        vm.label(addr, name);
+        return addr;
+    }
 }
